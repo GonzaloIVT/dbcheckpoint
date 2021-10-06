@@ -75,3 +75,4 @@ class Negocios(db.Model):
             
         }
 
+
