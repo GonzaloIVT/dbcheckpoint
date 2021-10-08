@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, Users, Productos, Negocios
+from models import db, Users, Productos, Negocios, Ventas, Detalleventa, Role, Categoria, Ingreso, Detalleingreso, Metodopago
 #from models import Person
 
 app = Flask(__name__)
@@ -30,31 +30,39 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
+
+
+
+
+
 @app.route('/users', methods=['GET', "POST"])
 def handle_hello():
     if request.method == "GET":
-        all_people = User.query.all()
+        all_people = Users.query.all()
         all_people = list(map(lambda x: x.serialize(), all_people))
 
         return jsonify(all_people), 200
 
-    else:
+    if request.method == "POST":
         body = request.get_json()
         if body is None:
             return "The request body is null", 400
-        if "usuario" not in body:
+        if "username" not in body:
             return "Especificar usuario", 400
         if "password" not in body:
             return "Especificar password", 400
         
-        onePeople = User.query.filter_by(email=body["email"]).first()
+        onePeople = Users.query.filter_by(email=body["email"]).first()
         if onePeople:
             if (onePeople.password == body["password"] ):
                 return(jsonify({"mensaje":True}))
             else:
                 return(jsonify({"mensaje":False}))
         else:
-            return("el mail no existe")
+            return("el email no existe")
+
+
+
 
 
 
@@ -70,17 +78,23 @@ def obtener_productos():
         body = request.get_json()
         if body is None:
             return "The request body is null", 400
+        if "codigo_barras" not in body:
+            return "Especificar codigo", 400
         if "nombre" not in body:
             return "Especificar nombre", 400
-        if "categoria" not in body:
-            return "Especificar categoria", 400
-        if "codigo" not in body:
-            return "Especificar codigo", 400
+            
+        return jsonify({ "msg": "ok"}), 200
+        #if "categoria" not in body:
+        #    return "Especificar categoria", 400
+        
+
+
+
 
 @app.route('/negocios', methods=["POST", "GET"])
 def obtener_negocios():
     if request.method == "GET":
-        all_negocios = Productos.query.all()
+        all_negocios = Negocios.query.all()
         all_negocios = list(map(lambda x: x.serialize(), all_negocios))
 
         return jsonify(all_negocios), 200
@@ -93,6 +107,183 @@ def obtener_negocios():
             return "Especificar nombre negocio", 400
         if "trabajadores" not in body:
             return "Especificar trabajador", 400
+
+
+
+
+
+@app.route('/ventas', methods=["POST", "GET"])
+def obtener_ventas():
+    if request.method == "GET":
+        all_ventas = Ventas.query.all()
+        all_ventas = list(map(lambda x: x.serialize(), all_ventas))
+
+        return jsonify(all_ventas), 200
+
+    else:
+        body = request.get_json()
+        if body is None:
+            return "The request body is null", 400
+        if "tipo_comprobante" not in body:
+            return "Especificar tipo_comprobante", 400
+        if "numero_comprobante" not in body:
+            return "Especificar numero_comprobante", 400
+        if "fecha" not in body:
+            return "Especificar fecha", 400
+        if "impuesto" not in body:
+            return "Especificar impuesto", 400
+        if "total" not in body:
+            return "Especificar total", 400
+
+        return jsonify({ "msg": "ok"}), 200
+
+
+
+
+
+
+@app.route('/detalleventa', methods=["POST", "GET"])
+def obtener_detalleventa():
+    if request.method == "GET":
+        all_detalleventa = Detalleventa.query.all()
+        all_detalleventa = list(map(lambda x: x.serialize(), all_detalleventa))
+
+        return jsonify(all_detalleventa), 200
+
+    else:
+        body = request.get_json()
+        if body is None:
+            return "The request body is null", 400
+        if "cantidad" not in body:
+            return "Especificar cantidad", 400
+        if "precio" not in body:
+            return "Especificar precio", 400
+
+
+
+
+
+
+@app.route('/role', methods=["POST", "GET"])
+def obtener_role():
+    if request.method == "GET":
+        all_role = Role.query.all()
+        all_role = list(map(lambda x: x.serialize(), all_role))
+
+        return jsonify(all_role), 200
+
+    else:
+        body = request.get_json()
+        if body is None:
+            return "The request body is null", 400
+        if "nombre_rol" not in body:
+            return "Especificar nombre_rol", 400
+
+
+
+
+
+
+@app.route('/categoria', methods=["POST", "GET"])
+def obtener_categoria():
+    if request.method == "GET":
+        all_categoria = Categoria.query.all()
+        all_categoria = list(map(lambda x: x.serialize(), all_categoria))
+
+        return jsonify(all_categoria), 200
+
+    else:
+        body = request.get_json()
+        if body is None:
+            return "The request body is null", 400
+        if "nombre_cat" not in body:
+            return "Especificar nombre_cat", 400
+        if "descripcion_cat" not in body:
+            return "Especificar descripcion", 400
+        
+        return jsonify({ "msg": "ok"}), 200
+
+
+
+
+
+
+@app.route('/ingreso', methods=["POST", "GET"])
+def obtener_ingreso():
+    if request.method == "GET":
+        all_ingreso = Ingreso.query.all()
+        all_ingreso = list(map(lambda x: x.serialize(), all_ingreso))
+
+        return jsonify(all_ingreso), 200
+
+    else:
+        body = request.get_json()
+        if body is None:
+            return "The request body is null", 400
+        if "proveedor" not in body:
+            return "Especificar proveedor", 400
+        if "tipo_comprobante_ing" not in body:
+            return "Especificar tipo_comprobante_ing", 400
+        if "numero_comprobante_ing" not in body:
+            return "Especificar numero_comprobante", 400
+        if "fecha_ing" not in body:
+            return "Especificar fecha", 400
+        if "impuesto_ing" not in body:
+            return "Especificar impuesto", 400
+        if "total_ing" not in body:
+            return "Especificar total", 400
+
+        return jsonify({ "msg": "ok"}), 200
+
+
+
+
+
+@app.route('/detalleingreso', methods=["POST", "GET"])
+def obtener_detalleingreso():
+    if request.method == "GET":
+        all_detalleingreso = Detalleingreso.query.all()
+        all_detalleingreso = list(map(lambda x: x.serialize(), all_detalleingreso))
+
+        return jsonify(all_detalleingreso), 200
+
+    else:
+        body = request.get_json()
+        if body is None:
+            return "The request body is null", 400
+        if "cantidad_di" not in body:
+            return "Especificar cantidad_di", 400
+        if "precio_di" not in body:
+            return "Especificar precio_di", 400
+            
+        return jsonify({ "msg": "ok"}), 200
+
+
+
+
+
+@app.route('/metodopago', methods=["POST", "GET"])
+def obtener_metodopago():
+    if request.method == "GET":
+        all_metodopago = Metodopago.query.all()
+        all_metodopago = list(map(lambda x: x.serialize(), all_metodopago))
+
+        return jsonify(all_metodopago), 200
+
+    else:
+        body = request.get_json()
+        if body is None:
+            return "The request body is null", 400
+        if "num_pago" not in body:
+            return "Especificar num_pago", 400
+        if "nombre_metpag" not in body:
+            return "Especificar nombre_metpag", 400
+        if "otros_datos" not in body:
+            return "Especificar otros_datos", 400
+
+        return jsonify({ "msg": "ok"}), 200
+        
+        
         
 
 # this only runs if `$ python src/main.py` is executed
