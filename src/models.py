@@ -19,6 +19,7 @@ class Users(db.Model):
             "username": self.username,
             "name": self.name,
             "last_name": self.last_name,
+            "password": self.password,
             "email": self.email,
             "role": self.role,
             "theme": self.theme,
@@ -36,7 +37,7 @@ class Productos(db.Model):
     codigo_barras = db.Column(db.String(120), unique=True, nullable=True)
     id_categoria = db.Column(db.Integer, unique=False, nullable=True)
     precio_venta = db.Column(db.Float(50), unique=False, nullable=True)
-    image = db.Column(db.String(50), unique=False, nullable=True)
+    image = db.Column(db.String(300), unique=False, nullable=True)
     stock = db.Column(db.Integer, unique=False, nullable=True)
     fecha_ingreso = db.Column(db.String(50), unique=False, nullable=False)
     costo_compra = db.Column(db.Float(50), unique=False, nullable=False)

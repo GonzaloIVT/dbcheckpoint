@@ -10,6 +10,9 @@ from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, Users, Productos, Negocios, Ventas, Detalleventa, Role, Categoria, Ingreso, Detalleingreso, Metodopago
 #from models import Person
+import datetime
+from flask_jwt_extended import  JWTManager, create_access_token, jwt_required, get_jwt_identity
+
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -19,6 +22,7 @@ MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
 setup_admin(app)
+jwt = JWTManager(app)
 
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
@@ -55,11 +59,28 @@ def handle_hello():
         onePeople = Users.query.filter_by(email=body["email"]).first()
         if onePeople:
             if (onePeople.password == body["password"] ):
-                return(jsonify({"mensaje":True}))
+                access_token = create_access_token(identity=onePeople.email)
+                data = {
+                    "info_user": onePeople.serialize(),
+                    "token": access_token,
+                }
+                return(jsonify(data))
             else:
-                return(jsonify({"mensaje":False}))
+                return(jsonify({"mensaje":False})),401
         else:
-            return("el email no existe")
+            return("el email no existe"),401
+
+
+"""@api.route("/private", methods=['GET'])
+@jwt_required()
+def profile():
+    if request.method == 'GET':
+        identity = get_jwt_identity()
+        oneSeller = PerfilVendedor.query.filter_by(email=identity).first()
+        return jsonify({ "identity": identity, "info_user": oneSeller.serialize()}), 200"""
+
+
+
 
 
 
