@@ -56,6 +56,10 @@ def handle_hello():
         if "password" not in body:
             return "Especificar password", 400
         
+        user = Users()
+        user.save()
+
+        
         onePeople = Users.query.filter_by(email=body["email"]).first()
         if onePeople:
             if (onePeople.password == body["password"] ):
@@ -69,6 +73,28 @@ def handle_hello():
                 return(jsonify({"mensaje":False})),401
         else:
             return("el email no existe"),401
+        if onePeople: 
+            return jsonify({"status": False, "msg": "Email  already in use"}), 400
+
+@app.route("/users/<int:id>", methods=["PUT"])
+def put_users(id):
+
+    username= request.json.get("username")
+    name= request.json.get("name")
+    last_name= request.json.get("last_name")
+    password= request.json.get("password")
+    email= request.json.get("email")
+    role= request.json.get("role")
+
+    user= Users.query.get(id)
+    user.name = name
+    user.last_name = last_name
+    user.password = password
+    user.email = email
+    user.role = role
+    user.update()
+
+    return jsonify(users.serialize()),200
 
 
 """@api.route("/private", methods=['GET'])
@@ -107,6 +133,9 @@ def obtener_productos():
         return jsonify({ "msg": "ok"}), 200
         #if "categoria" not in body:
         #    return "Especificar categoria", 400
+    
+    productos= Productos()
+    productos.save()
         
 
 
