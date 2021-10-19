@@ -94,7 +94,21 @@ def put_users(id):
     user.role = role
     user.update()
 
-    return jsonify(users.serialize()),200
+    return jsonify(Users.serialize()),200
+
+@app.route("/users/<int:id>", methods=["DELETE"])
+def eliminar_usuario(id):
+    
+    user=Users.query.get(id)
+
+    if not user: return jsonify({"status": False, "msg": "Usuario no existe"}),400
+
+    user.delete()
+
+    return jsonify({"status": True, "msg": "Usuario borrado"}),200
+
+
+
 
 
 """@api.route("/private", methods=['GET'])
@@ -136,7 +150,49 @@ def obtener_productos():
     
     productos= Productos()
     productos.save()
+
+@app.route("/productos/<int:id>", methods=["PUT"])
+def modificar_producto(id):
+
+    nombre= request.json.get("nombre")
+    codigo_barras= request.json.get("codigo_barras")
+    id_categoria= request.json.get("id_categoria")
+    precio_venta= request.json.get("precio_venta")
+    image= request.json.get("image")
+    stock= request.json.get("stock")
+    fecha_ingreso= request.json.get("fecha_ingreso")
+    costo_compra= request.json.get("costo_compra")
+    factura_proveedor= request.json.get("factura_proveedor")
+
+    producto= Productos.query.get(id)
+    producto.nombre = nombre
+    producto.codigo_barras = codigo_barras
+    producto.id_categoria = id_categoria
+    producto.precio_venta = precio_venta
+    producto.image = image
+    producto.stock = stock
+    producto.fecha_ingreso = fecha_ingreso
+    producto.costo_compra = costo_compra
+    producto.factura_proveedor = factura_proveedor
+    producto.update()
+
+    return jsonify(Productos.serialize()),200
+
+@app.route("/productos//<int:id>", methods=["DELETE"])
+def eliminar_producto(id):
+    
+    producto=Productos.query.get(id)
+
+    if not producto: return jsonify({"status": False, "msg": "Producto no existe"}),400
+
+    producto.delete()
+
+    return jsonify({"status": True, "msg": "Producto borrado"}),200
+
         
+
+
+
 
 
 
@@ -162,6 +218,7 @@ def obtener_negocios():
 
 
 
+
 @app.route('/ventas', methods=["POST", "GET"])
 def obtener_ventas():
     if request.method == "GET":
@@ -170,7 +227,7 @@ def obtener_ventas():
 
         return jsonify(all_ventas), 200
 
-    else:
+    if request.method == "POST":
         body = request.get_json()
         if body is None:
             return "The request body is null", 400
@@ -186,6 +243,35 @@ def obtener_ventas():
             return "Especificar total", 400
 
         return jsonify({ "msg": "ok"}), 200
+        
+@app.route("/venas/<int:id>", methods=["PUT"])
+def modificar_venta(id):
+
+    nombre= request.json.get("nombre")
+    codigo_barras= request.json.get("codigo_barras")
+    id_categoria= request.json.get("id_categoria")
+    precio_venta= request.json.get("precio_venta")
+    image= request.json.get("image")
+    stock= request.json.get("stock")
+    fecha_ingreso= request.json.get("fecha_ingreso")
+    costo_compra= request.json.get("costo_compra")
+    factura_proveedor= request.json.get("factura_proveedor")
+
+    producto= Productos.query.get(id)
+    producto.nombre = nombre
+    producto.codigo_barras = codigo_barras
+    producto.id_categoria = id_categoria
+    producto.precio_venta = precio_venta
+    producto.image = image
+    producto.stock = stock
+    producto.fecha_ingreso = fecha_ingreso
+    producto.costo_compra = costo_compra
+    producto.factura_proveedor = factura_proveedor
+    producto.update()
+
+    return jsonify(Productos.serialize()),200
+
+
 
 
 
@@ -211,9 +297,6 @@ def obtener_detalleventa():
 
 
 
-
-
-
 @app.route('/role', methods=["POST", "GET"])
 def obtener_role():
     if request.method == "GET":
@@ -228,9 +311,6 @@ def obtener_role():
             return "The request body is null", 400
         if "nombre_rol" not in body:
             return "Especificar nombre_rol", 400
-
-
-
 
 
 
@@ -252,9 +332,6 @@ def obtener_categoria():
             return "Especificar descripcion", 400
         
         return jsonify({ "msg": "ok"}), 200
-
-
-
 
 
 
@@ -286,9 +363,6 @@ def obtener_ingreso():
         return jsonify({ "msg": "ok"}), 200
 
 
-
-
-
 @app.route('/detalleingreso', methods=["POST", "GET"])
 def obtener_detalleingreso():
     if request.method == "GET":
@@ -307,9 +381,6 @@ def obtener_detalleingreso():
             return "Especificar precio_di", 400
             
         return jsonify({ "msg": "ok"}), 200
-
-
-
 
 
 @app.route('/metodopago', methods=["POST", "GET"])

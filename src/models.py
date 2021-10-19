@@ -8,8 +8,8 @@ class Users(db.Model):
     name = db.Column(db.String(120), unique=False, nullable=False)
     last_name = db.Column(db.String(120), unique=False, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    role = db.Column(db.String(120), unique=False, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False) 
+    role = db.Column(db.Integer, db.ForeignKey("role.id"))
     theme = db.Column(db.String(120), unique=False, nullable=True)
     font_preference = db.Column(db.String(120), unique=False, nullable=True)
     
@@ -19,7 +19,7 @@ class Users(db.Model):
             "username": self.username,
             "name": self.name,
             "last_name": self.last_name,
-            "password": self.password,
+            #"password": self.password,
             "email": self.email,
             "role": self.role,
             "theme": self.theme,
@@ -154,7 +154,7 @@ class Detalleventa(db.Model):
 
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    nombre_rol = db.Column(db.Integer, db.ForeignKey("users.id"))
+    nombre_rol = db.Column(db.String(120), unique=False, nullable=False)
     descripcion = db.Column(db.String(120), unique=False, nullable=True)
     rel_users_role = db.relationship("Users", uselist=False)
     
