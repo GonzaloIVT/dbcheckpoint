@@ -197,22 +197,7 @@ def eliminar_producto(id):
 
 
 
-@app.route('/negocios', methods=["POST", "GET"])
-def obtener_negocios():
-    if request.method == "GET":
-        all_negocios = Negocios.query.all()
-        all_negocios = list(map(lambda x: x.serialize(), all_negocios))
 
-        return jsonify(all_negocios), 200
-
-    else:
-        body = request.get_json()
-        if body is None:
-            return "The request body is null", 400
-        if "nombre" not in body:
-            return "Especificar nombre negocio", 400
-        if "trabajadores" not in body:
-            return "Especificar trabajador", 400
 
 
 
@@ -244,7 +229,7 @@ def obtener_ventas():
 
         return jsonify({ "msg": "ok"}), 200
         
-@app.route("/venas/<int:id>", methods=["PUT"])
+@app.route("/ventas/<int:id>", methods=["PUT"])
 def modificar_venta(id):
 
     nombre= request.json.get("nombre")
@@ -257,12 +242,12 @@ def modificar_venta(id):
     costo_compra= request.json.get("costo_compra")
     factura_proveedor= request.json.get("factura_proveedor")
 
-    producto= Productos.query.get(id)
-    producto.nombre = nombre
-    producto.codigo_barras = codigo_barras
-    producto.id_categoria = id_categoria
-    producto.precio_venta = precio_venta
-    producto.image = image
+    venta= Ventas.query.get(id)
+    producto.tipo_comprobante = tipo_comprobante
+    producto.numero_comprobante = numero_comprobante
+    producto.fecha = fecha
+    producto.impuesto = impuesto
+    producto.total = total
     producto.stock = stock
     producto.fecha_ingreso = fecha_ingreso
     producto.costo_compra = costo_compra
@@ -270,6 +255,17 @@ def modificar_venta(id):
     producto.update()
 
     return jsonify(Productos.serialize()),200
+
+@app.route("/ventas//<int:id>", methods=["DELETE"])
+def eliminar_venta(id):
+    
+    venta=Ventas.query.get(id)
+
+    if not venta: return jsonify({"status": False, "msg": "Venta no existe"}),400
+
+    venta.delete()
+
+    return jsonify({"status": True, "msg": "Venta borrada"}),200
 
 
 
@@ -294,6 +290,10 @@ def obtener_detalleventa():
             return "Especificar cantidad", 400
         if "precio" not in body:
             return "Especificar precio", 400
+
+
+
+
 
 
 
@@ -403,6 +403,24 @@ def obtener_metodopago():
             return "Especificar otros_datos", 400
 
         return jsonify({ "msg": "ok"}), 200
+
+
+@app.route('/negocios', methods=["POST", "GET"])
+def obtener_negocios():
+    if request.method == "GET":
+        all_negocios = Negocios.query.all()
+        all_negocios = list(map(lambda x: x.serialize(), all_negocios))
+
+        return jsonify(all_negocios), 200
+
+    else:
+        body = request.get_json()
+        if body is None:
+            return "The request body is null", 400
+        if "nombre" not in body:
+            return "Especificar nombre negocio", 400
+        if "trabajadores" not in body:
+            return "Especificar trabajador", 400
         
         
         

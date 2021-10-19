@@ -12,6 +12,7 @@ class Users(db.Model):
     role = db.Column(db.Integer, db.ForeignKey("role.id"))
     theme = db.Column(db.String(120), unique=False, nullable=True)
     font_preference = db.Column(db.String(120), unique=False, nullable=True)
+    rel_users_ventas = db.relationship("Ventas")
     
     def serialize(self):
         return {
@@ -114,6 +115,7 @@ class Ventas(db.Model):
     impuesto = db.Column(db.Float, unique=False, nullable=False)
     total = db.Column(db.Float, unique=False, nullable=False)
     rel_ventas_users = db.relationship("Users")
+    rel_ventas_detalleventa = db.relationship("Detalleventa")
 
     def serialize(self):
         return {
@@ -125,17 +127,28 @@ class Ventas(db.Model):
             "impuesto": self.impuesto,
             "total": self.total
         }
+    
+     def save(self):
+        db.session.add(self)
+        db.session.commit()
+    
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit(self)
 
 
 
 
 class Detalleventa(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    #id_venta = db.Column(db.Integer, db.ForeignKey("ventas.id"))
+    id_venta = db.Column(db.Integer, db.ForeignKey("Ventas.id"))
     #id_articulo = db.Column(db.Integer, db.ForeignKey("productos.id"))
     cantidad = db.Column(db.Integer, unique=False, nullable=False)
     precio = db.Column(db.Integer, unique=False, nullable=False)
-    #rel_detalleventas_ventas = db.relationship("Ventas")
+    rel_detalleventa_ventas = db.relationship("Ventas")
     #rel_detalleventas_productos = db.relationship("Productos")
     
     
