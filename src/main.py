@@ -189,19 +189,6 @@ def eliminar_producto(id):
 
     return jsonify({"status": True, "msg": "Producto borrado"}),200
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @app.route('/ventas', methods=["POST", "GET"])
@@ -232,29 +219,22 @@ def obtener_ventas():
 @app.route("/ventas/<int:id>", methods=["PUT"])
 def modificar_venta(id):
 
-    nombre= request.json.get("nombre")
-    codigo_barras= request.json.get("codigo_barras")
-    id_categoria= request.json.get("id_categoria")
-    precio_venta= request.json.get("precio_venta")
-    image= request.json.get("image")
-    stock= request.json.get("stock")
-    fecha_ingreso= request.json.get("fecha_ingreso")
-    costo_compra= request.json.get("costo_compra")
-    factura_proveedor= request.json.get("factura_proveedor")
+    tipo_comprobante= request.json.get("tipo_comprobante")
+    numero_comprobante= request.json.get("numero_comprobante")
+    metodo_pago= request.json.get("metodo_pago")
+    fecha= request.json.get("fecha")
+    impuesto= request.json.get("impuesto")
+    total= request.json.get("total")
 
     venta= Ventas.query.get(id)
-    producto.tipo_comprobante = tipo_comprobante
-    producto.numero_comprobante = numero_comprobante
-    producto.fecha = fecha
-    producto.impuesto = impuesto
-    producto.total = total
-    producto.stock = stock
-    producto.fecha_ingreso = fecha_ingreso
-    producto.costo_compra = costo_compra
-    producto.factura_proveedor = factura_proveedor
-    producto.update()
+    venta.tipo_comprobante = tipo_comprobante
+    venta.numero_comprobante = numero_comprobante
+    venta.fecha = fecha
+    venta.impuesto = impuesto
+    venta.total = total
+    venta.update()
 
-    return jsonify(Productos.serialize()),200
+    return jsonify(Ventas.serialize()),200
 
 @app.route("/ventas//<int:id>", methods=["DELETE"])
 def eliminar_venta(id):
@@ -266,11 +246,6 @@ def eliminar_venta(id):
     venta.delete()
 
     return jsonify({"status": True, "msg": "Venta borrada"}),200
-
-
-
-
-
 
 
 
@@ -291,26 +266,31 @@ def obtener_detalleventa():
         if "precio" not in body:
             return "Especificar precio", 400
 
+@app.route("/detalleventa/<int:id>", methods=["PUT"])
+def modificar_detalleventa(id):
 
+    cantidad= request.json.get("cantidad")
+    precio= request.json.get("precio")
+    
 
+    detalleventa= Detalleventa.query.get(id)
+    detalleventa.tipo_comprobante = tipo_comprobante
+    detalleventa.numero_comprobante = numero_comprobante
+    
+    detalleventa.update()
 
+    return jsonify(Detalleventa.serialize()),200
 
+@app.route("/detalleventa/<int:id>", methods=["DELETE"])
+def eliminar_datelleventa(id):
+    
+    detalleventa = Detalleventa.query.get(id)
 
+    if not detalleventa: return jsonify({"status": False, "msg": "Detalleventa no existe"}),400
 
-@app.route('/role', methods=["POST", "GET"])
-def obtener_role():
-    if request.method == "GET":
-        all_role = Role.query.all()
-        all_role = list(map(lambda x: x.serialize(), all_role))
+    detalleventa.delete()
 
-        return jsonify(all_role), 200
-
-    else:
-        body = request.get_json()
-        if body is None:
-            return "The request body is null", 400
-        if "nombre_rol" not in body:
-            return "Especificar nombre_rol", 400
+    return jsonify({"status": True, "msg": "Detalleventa borrada"}),200
 
 
 
@@ -332,6 +312,32 @@ def obtener_categoria():
             return "Especificar descripcion", 400
         
         return jsonify({ "msg": "ok"}), 200
+
+@app.route("/categoria/<int:id>", methods=["PUT"])
+def modificar_categoria(id):
+
+    nombre_cat= request.json.get("nombre_cat")
+    descripcion_cat= request.json.get("descripcion_cat")
+    
+
+    categoria= Categoria.query.get(id)
+    categoria.nombre_cat = nombre_cat
+    categoria.descripcion_cat = descripcion_cat
+    
+    categoria.update()
+
+    return jsonify(Categoria.serialize()),200
+
+@app.route("/categoria/<int:id>", methods=["DELETE"])
+def eliminar_categoria(id):
+    
+    categoria = Categoria.query.get(id)
+
+    if not categoria: return jsonify({"status": False, "msg": "Categoria no existe"}),400
+
+    categoria.delete()
+
+    return jsonify({"status": True, "msg": "Categoria borrada"}),200
 
 
 
@@ -362,6 +368,41 @@ def obtener_ingreso():
 
         return jsonify({ "msg": "ok"}), 200
 
+@app.route("/ingreso/<int:id>", methods=["PUT"])
+def modificar_ingreso(id):
+
+    proveedor= request.json.get("proveedor")
+    tipo_comprobante_ing= request.json.get("tipo_comprobante_ing")
+    numero_comprobante_ing= request.json.get("numero_comprobante_ing")
+    fecha_ing= request.json.get("fecha_ing")
+    impuesto_ing= request.json.get("impuesto_ingt")
+    total_ing= request.json.get("total_ing")
+    
+
+    ingreso= Categoria.query.get(id)
+    ingreso.proveedor = proveedor
+    ingreso.tipo_comprobante_ing = tipo_comprobante_ing
+    ingreso.numero_comprobante_ing = numero_comprobante_ing
+    ingreso.fecha_ing = fecha_ing
+    ingreso.impuesto_ing = impuesto_ing
+    ingreso.total_ing = total_ing
+    
+    ingreso.update()
+
+    return jsonify(Ingreso.serialize()),200
+
+@app.route("/ingreso/<int:id>", methods=["DELETE"])
+def eliminar_ingreso(id):
+    
+    ingreso = Ingreso.query.get(id)
+
+    if not ingreso: return jsonify({"status": False, "msg": "Ingreso no existe"}),400
+
+    ingreso.delete()
+
+    return jsonify({"status": True, "msg": "Ingreso borrado"}),200
+
+
 
 @app.route('/detalleingreso', methods=["POST", "GET"])
 def obtener_detalleingreso():
@@ -381,6 +422,61 @@ def obtener_detalleingreso():
             return "Especificar precio_di", 400
             
         return jsonify({ "msg": "ok"}), 200
+    
+@app.route("/detalleingreso/<int:id>", methods=["PUT"])
+def modificar_detalleingreso(id):
+
+    id_articulo= request.json.get("id_articulo")
+    cantidad_di= request.json.get("cantidad_di")
+    precio_di= request.json.get("precio_di")
+    
+    detalleingreso= Detallingreso.query.get(id)
+    detalleingreso.id_articulo = id_articulo
+    detalleingreso.cantidad_di = cantidad_di
+    detalleingreso.precio_di = precio_di
+    
+    detalleingreso.update()
+
+    return jsonify(Detalleingreso.serialize()),200
+
+@app.route("/detalleingreso/<int:id>", methods=["DELETE"])
+def eliminar_detalleingreso(id):
+    
+    detalleingreso = Detalleingreso.query.get(id)
+
+    if not detalleingresoo: return jsonify({"status": False, "msg": "Detalleingreso no existe"}),400
+
+    detalleingreso.delete()
+
+    return jsonify({"status": True, "msg": "Detalleingreso borrado"}),200
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@app.route('/role', methods=["POST", "GET"])
+def obtener_role():
+    if request.method == "GET":
+        all_role = Role.query.all()
+        all_role = list(map(lambda x: x.serialize(), all_role))
+
+        return jsonify(all_role), 200
+
+    else:
+        body = request.get_json()
+        if body is None:
+            return "The request body is null", 400
+        if "nombre_rol" not in body:
+            return "Especificar nombre_rol", 400
 
 
 @app.route('/metodopago', methods=["POST", "GET"])
